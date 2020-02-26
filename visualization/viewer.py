@@ -5,16 +5,22 @@ from player import AudioPlayer
 
 
 class PlotDiar:
-    """
-    A viewer of segmentation
-    """
+    '''
+    A class to create timeline diagram form diarizatoin result
+    '''
     def __init__(self, map=None, wav=None, title='', gui=False, pick=False, vgrid=False, size=(18, 9)):
+        ''' Initial the plotDiar object
+            most of the code is used to setup the axis of matplotlib
+        '''
+
+        # setting the plot size
         self.rect_picked = None
         self.rect_color = (0.0, 0.6, 1.0, 1.0)  # '#0099FF'
         self.rect_selected_color = (0.75, 0.75, 0, 1.0)  # 'y'
         self.cluster_colors = [(0.0, 0.6, 1.0, 1.0), (0.0, 1.0, 0.6, 1.0), (0.6, 0.0, 1.0, 1.0), 
-                               (0.6, 1.0, 0.0, 1.0), (1.0, 0.0, 0.6, 1.0), (1.0, 0.6, 0.0, 1.0)]
+                                (0.6, 1.0, 0.0, 1.0), (1.0, 0.0, 0.6, 1.0), (1.0, 0.6, 0.0, 1.0)]
 
+        # shortcut key for the plot
         plot.rcParams['keymap.fullscreen'] = 'ctrl+f'
         plot.rcParams['keymap.home'] = ''
         plot.rcParams['keymap.back'] = ''
@@ -28,8 +34,8 @@ class PlotDiar:
         plot.rcParams['keymap.all_axes'] = ''
         plot.rcParams['toolbar'] = 'None'
         plot.rcParams['keymap.save'] = 'ctrl+s'
-        # plot.rcParams.update({'font.family': 'courrier'})
 
+        # other settings from the args
         self.pick = pick
         self.gui = gui
         self.vgrid = vgrid
@@ -37,6 +43,7 @@ class PlotDiar:
         self.plot = plot
         self.title = title
 
+        # set axe from matplotlib
         self.ax = self.fig.add_subplot(1, 1, 1)
         cids = list()
         if self.gui:
@@ -64,20 +71,20 @@ class PlotDiar:
         self.time_stamp_idx = 0
 
     def _draw_timeline(self, t):
-        """
+        '''
         Draw the timeline a position t
         :param t: in second, a float
 
-        """
+        '''
         min, max = self.ax.get_ylim()
         self.timeline.set_data([t, t], [min, max])
         self._draw_info(t)
 
     def _update_timeline(self):
-        """
+        '''
         Update the timeline given the position in the audio player
 
-        """
+        '''
         if self.audio is not None and self.audio.playing():
             t = self.audio.time()
             min, max = self.ax.get_xlim()
@@ -92,11 +99,11 @@ class PlotDiar:
             self.fig.canvas.draw()
 
     def _draw_info(self, t):
-        """
+        '''
         Draw information on segment and timestamp
         :param t: a float
         :return:
-        """
+        '''
         ch = 'time:{:s} ({:.3f} sec {:d} frame)'.format(self._hms(t), t,
                                                         int(t * 100))
         ch2 = '\n\n\n'
@@ -114,10 +121,9 @@ class PlotDiar:
         plot.xlabel(ch + '\n' + ch2)
 
     def draw(self):
-        """
+        '''
         Draw the segmentation
-
-        """
+        '''
         y = 0
         labels_pos = []
         labels = []
@@ -132,7 +138,7 @@ class PlotDiar:
                 self.maxx = max(self.maxx, row['stop'] /1000)
                 c = self.cluster_colors[i%len(self.cluster_colors)]
                 rect = plot.Rectangle((x, y), w, self.height,
-                                      color=c, picker=self.pick)
+                                        color=c, picker=self.pick)
                 self.ax.add_patch(rect)
             y += self.height
         if self.gui:
@@ -146,7 +152,7 @@ class PlotDiar:
         self.end_play = self.maxx
         for cluster in self.map:
             self.ax.plot([0, self.maxx], [y, y], linestyle=':',
-                         color='#AAAAAA')
+                            color='#AAAAAA')
             y -= self.height
 
         plot.title(self.title + ' (last frame: ' + str(self.maxx) + ')')
@@ -159,16 +165,16 @@ class PlotDiar:
         if self.vgrid:
             for x in  self.time_stamp:
                 self.ax.plot([x, x], [0, self.maxy], linestyle=':',
-                             color='#AAAAAA')
+                                color='#AAAAAA')
 
 
     def _dec_right(self, min, max):
-        """
+        '''
         Move right
         :param min: a float
         :param max: a float
 
-        """
+        '''
         dec = (max - min) // 10
         diff = max - min
         if max + dec <= self.maxx:
@@ -179,12 +185,12 @@ class PlotDiar:
             plot.xlim(self.maxx - diff, self.maxx)
 
     def _dec_left(self, min, max):
-        """
+        '''
         Move left
         :param min: a float
         :param max: a float
 
-        """
+        '''
         dec = (max - min) // 10
         diff = max - min
         if min - dec >= 0:
@@ -193,11 +199,11 @@ class PlotDiar:
             plot.xlim(0, diff)
 
     def _on_keypress(self, event):
-        """
+        '''
         manage the keypress event
         :param event: a key event
 
-        """
+        '''
         hmin, hmax = self.ax.get_xlim()
         diff = hmax - hmin
         if event.key == 'ctrl++' or event.key == 'ctrl+=':
@@ -238,11 +244,11 @@ class PlotDiar:
         self.fig.canvas.draw()
 
     def _on_click(self, event):
-        """
+        '''
         manage the mouse event
         :param event: a mouse event
 
-        """
+        '''
         if event.xdata is not None and self.rect_picked is None:
             if self.audio is not None:
                 self.audio.pause()
@@ -251,11 +257,11 @@ class PlotDiar:
             self.fig.canvas.draw()
 
     def _on_pick(self, event):
-        """
+        '''
         manage the selection of a segment
         :param event: a picked event
 
-        """
+        '''
         if isinstance(event.artist, Rectangle) and event.mouseevent.dblclick:
             print('on pick dbclick')
             rect = event.artist
@@ -292,9 +298,9 @@ class PlotDiar:
 
     @classmethod
     def _colors_are_equal(cls, c1, c2):
-        """
+        '''
         Compare two colors
-        """
+        '''
         for i in range(4):
             if c1[i] != c2[i]:
                 return False
@@ -302,11 +308,11 @@ class PlotDiar:
 
     @classmethod
     def _hms(cls, s):
-        """
+        '''
         conversion of seconds into hours, minutes and secondes
         :param s:
         :return: int, int, float
-        """
+        '''
         h = int(s) // 3600
         s %= 3600
         m = int(s) // 60
