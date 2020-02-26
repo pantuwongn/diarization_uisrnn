@@ -21,7 +21,7 @@ class AudioPlayer:
         # call a method to open wav file
         self._open(wav)
 
-    def callback(self, frame_count, time_info, status):
+    def callback(self, in_data, frame_count, time_info, status):
         ''' This is a callback function for pyaudio to 
                 open wav
         '''

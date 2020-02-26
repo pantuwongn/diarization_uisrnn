@@ -317,7 +317,7 @@ def main(wav_path, embedding_per_second=1.0, overlap_rate=0.5):
 
 
 # how to call
-main(r'wavs/IS1001a.Mix-Headset.wav', embedding_per_second=1.2, overlap_rate=0.4)
+main(r'wavs/rmdmy.wav', embedding_per_second=1.2, overlap_rate=0.4)
 
 
 # In[ ]:
