@@ -168,7 +168,7 @@ dependencies:
     - resampy==0.2.2
     - scikit-learn==0.22.1
     - soundfile==0.10.3.post1
-    - tensorboard==1.15.0
-    - tensorflow==1.15.0
-    - tensorflow-estimator==1.15.1
+    - tensorboard==2.1.0
+    - tensorflow==2.1.0
+    - tensorflow-estimator==2.1.0
 
