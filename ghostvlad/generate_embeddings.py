@@ -8,32 +8,7 @@ import librosa
 import toolkits
 import random
 
-# ===========================================
-#        Parse the argument
-# ===========================================
 import argparse
-parser = argparse.ArgumentParser()
-# set up training configuration.
-parser.add_argument('--gpu', default='', type=str)
-parser.add_argument('--resume', default=r'pretrained/weights.h5', type=str)
-parser.add_argument('--data_path', default='4persons', type=str)
-# set up network configuration.
-parser.add_argument('--net', default='resnet34s',
-                    choices=['resnet34s', 'resnet34l'], type=str)
-parser.add_argument('--ghost_cluster', default=2, type=int)
-parser.add_argument('--vlad_cluster', default=8, type=int)
-parser.add_argument('--bottleneck_dim', default=512, type=int)
-parser.add_argument('--aggregation_mode', default='gvlad',
-                    choices=['avg', 'vlad', 'gvlad'], type=str)
-# set up learning rate, training loss and optimizer.
-parser.add_argument('--loss', default='softmax',
-                    choices=['softmax', 'amsoftmax'], type=str)
-parser.add_argument('--test_type', default='normal',
-                    choices=['normal', 'hard', 'extend'], type=str)
-
-global args
-args = parser.parse_args()
-
 
 # calc speaker-embeddings similarity in pretty format output.
 def similar(matrix):
@@ -191,12 +166,13 @@ def main():
     # The feature extraction process has to be done sample-by-sample,
     # because each sample is of different lengths.
 
-    SRC_PATH = r'/data/dataset/SpkWav120'
+    SRC_PATH = r'dataset'
     path_spk_tuples = prepare_data(SRC_PATH)
+    print(path_spk_tuples )
     train_sequence = []
     train_cluster_id = []
 
-    for epoch in range(7000):  # Random choice utterances from whole wavfiles
+    for epoch in range(10000):  # Random choice utterances from whole wavfiles
         # A merged utterance contains [10,20] utterances
         splits_count = np.random.randint(10, 20, 1)
         path_spks = random.sample(path_spk_tuples, splits_count[0])
@@ -219,4 +195,30 @@ def main():
 
 
 if __name__ == "__main__":
+    # ===========================================
+#        Parse the argument
+# ===========================================
+
+    parser = argparse.ArgumentParser()
+    # set up training configuration.
+    parser.add_argument('--gpu', default='', type=str)
+    parser.add_argument('--resume', default=r'pretrained/weights.h5', type=str)
+    parser.add_argument('--data_path', default='4persons', type=str)
+    # set up network configuration.
+    parser.add_argument('--net', default='resnet34s',
+                        choices=['resnet34s', 'resnet34l'], type=str)
+    parser.add_argument('--ghost_cluster', default=2, type=int)
+    parser.add_argument('--vlad_cluster', default=8, type=int)
+    parser.add_argument('--bottleneck_dim', default=512, type=int)
+    parser.add_argument('--aggregation_mode', default='gvlad',
+                        choices=['avg', 'vlad', 'gvlad'], type=str)
+    # set up learning rate, training loss and optimizer.
+    parser.add_argument('--loss', default='softmax',
+                        choices=['softmax', 'amsoftmax'], type=str)
+    parser.add_argument('--test_type', default='normal',
+                        choices=['normal', 'hard', 'extend'], type=str)
+
+    global args
+    args = parser.parse_args()
+
     main()
