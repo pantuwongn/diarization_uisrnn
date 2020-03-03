@@ -191,7 +191,7 @@ def main():
             epoch, len(utterance_speakers), len(path_spks)))
 
     np.savez('training_data', train_sequence=train_sequence,
-             train_cluster_id=train_cluster_id)
+             train_cluster_id=train_cluster_id, allow_pickle=True)
 
 
 if __name__ == "__main__":
