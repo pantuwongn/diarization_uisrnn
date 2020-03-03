@@ -190,8 +190,8 @@ def main():
         print("epoch:{}, utterance length: {}, speakers: {}".format(
             epoch, len(utterance_speakers), len(path_spks)))
 
-    np.savez('training_data', train_sequence=train_sequence,
-             train_cluster_id=train_cluster_id)
+    np.savez( 'training_data', train_sequence=train_sequence,
+             train_cluster_id=train_cluster_id, allow_picket=True )
 
 
 if __name__ == "__main__":
