@@ -36,11 +36,12 @@ def diarization_experiment(model_args, training_args, inference_args):
   test_record = []
 
   train_data = np.load( './ghostvlad/training_data.npz', allow_pickle=True )
-  print( train_data )
-  import sys
-  sys.exit(0)
   train_sequence = train_data['train_sequence']
+  print( 'train_sequence' )
+  print( train_sequence )
   train_cluster_id = train_data['train_cluster_id']
+  print( 'train_cluster_id' )
+  print( train_cluster_id )
   train_sequence_list = [seq.astype(float)+0.00001 for seq in train_sequence]
   train_cluster_id_list = [np.array(cid).astype(str) for cid in train_cluster_id]
 
